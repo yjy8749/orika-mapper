@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        maven {
+            jcenter()
+            url 'http://dl.bintray.com/cjstehno/public'
+        }
+    }
+    dependencies {
+        classpath 'gradle-templates:gradle-templates:1.5'
+        classpath 'io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE'
+    }
+}
+
+apply plugin: 'java'
+
+/**
+ * ========================================== Gradle Templates =======================================
+ * https://github.com/townsfolk/gradle-templates
+ */
+apply plugin: 'templates'
+
+/**
+ * ========================================== Spring Dependency Management ===========================
+ * http://platform.spring.io/platform/#quick-start
+ */
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+    imports {
+        mavenBom 'io.spring.platform:platform-bom:2.0.3.RELEASE'
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'http://repo.spring.io/libs-release-remote/' }
+    maven { url 'http://maven.oschina.net/content/groups/public/' }
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+
+    compile 'joda-time:joda-time'
+    compile 'org.apache.commons:commons-lang3'
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'com.google.guava:guava'
+    compile 'ma.glasnost.orika:orika-core:1.4.6'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'junit:junit'
+}
+

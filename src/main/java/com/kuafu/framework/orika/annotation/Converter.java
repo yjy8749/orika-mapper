@@ -32,4 +32,9 @@ public @interface Converter {
      */
     boolean master() default true;
 
+    /**
+     * 是否根据类型从Spring上下文查找
+     */
+    boolean springIoc() default false;
+
 }

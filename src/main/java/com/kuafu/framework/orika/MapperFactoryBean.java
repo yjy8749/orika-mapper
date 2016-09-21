@@ -6,18 +6,23 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.Type;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by Lenovo on 2016/3/11.
  */
 @Component
-public class MapperFactoryBean implements FactoryBean<Mapper> {
+public class MapperFactoryBean implements FactoryBean<Mapper>,ApplicationContextAware {
 
     private static final Object lock = new Object();
 
     private MapperFactory factory = null;
+
+    private ApplicationContext applicationContext;
 
     /**
      * 构建Factory
@@ -62,7 +67,7 @@ public class MapperFactoryBean implements FactoryBean<Mapper> {
 
     @Override
     public Mapper getObject() throws Exception {
-        return new Mapper(this.getFactory());
+        return new Mapper(this.getFactory(),applicationContext);
     }
 
     @Override
@@ -73,5 +78,10 @@ public class MapperFactoryBean implements FactoryBean<Mapper> {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

@@ -6,6 +6,7 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.MappingStrategy;
 import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
@@ -17,10 +18,13 @@ public class Mapper implements MapperFacade {
     private MapperFacade mapper;
     private MapperFactory mapperFactory;
     private Object mapperBuildLock = new Object();
+    private ApplicationContext applicationContext;
 
-    public Mapper(MapperFactory mapperFactory) {
+
+    public Mapper(MapperFactory mapperFactory, ApplicationContext applicationContext) {
         this.mapperFactory = mapperFactory;
         this.mapper = this.mapperFactory.getMapperFacade();
+        this.applicationContext = applicationContext;
     }
 
     private void addMappingIfNotRegistered(Class<?> sourceClass, Class<?> destinationClass) {
@@ -32,7 +36,7 @@ public class Mapper implements MapperFacade {
         if(!this.mapperFactory.existsRegisteredMapper(sourceType,destinationType,true)){
             synchronized (mapperBuildLock){
                 if(!this.mapperFactory.existsRegisteredMapper(sourceType,destinationType,true)) {
-                    new MappingBuilder(this.mapperFactory, sourceType, destinationType).build();
+                    new MappingBuilder(this.mapperFactory, sourceType, destinationType,applicationContext).build();
                 }
             }
         }

@@ -7,7 +7,7 @@ import com.kuafu.framework.orika.annotation.Converter;
  * Created by yangjiayong on 2016/9/14.
  */
 @ClassMapping(
-        @Converter(value = TestConvert.class,effectClass = ConvertBean.class)
+        @Converter(value = TestConvert.class,effectClass = ConvertBean.class,springIoc = true)
 )
 public class ConvertBean {
 

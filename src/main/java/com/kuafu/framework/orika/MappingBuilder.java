@@ -12,6 +12,7 @@ import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.Type;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -50,7 +51,9 @@ public class MappingBuilder {
     private Converter sourceConverter = null;
     private Converter destinationConverter = null;
 
-    public MappingBuilder(MapperFactory mapperFactory, Type<?> sourceType, Type<?> destinationType) {
+    private ApplicationContext applicationContext;
+
+    public MappingBuilder(MapperFactory mapperFactory, Type<?> sourceType, Type<?> destinationType, ApplicationContext applicationContext) {
         this.sourceType = sourceType;
         this.destinationType = destinationType;
         this.mapperFactory = mapperFactory;
@@ -58,6 +61,7 @@ public class MappingBuilder {
         this.destinationClass = this.destinationType.getRawType();
         this.buildMapping();
         this.buildConverts();
+        this.applicationContext = applicationContext;
     }
 
     private void buildConverts(){
@@ -141,14 +145,14 @@ public class MappingBuilder {
                         if (sourceConverter != null) {
                             //SourceClass上的自定义转换器
                             for (Class<? extends CustomConverter> converterClass : sourceConverter.value()) {
-                                CustomConverter converter = converterClass.newInstance();
+                                CustomConverter converter = sourceConverter.springIoc()?applicationContext.getBean(converterClass):converterClass.newInstance();
                                 converter.mappedOut(source, destination);
                             }
                         }
                         if (destinationConverter != null) {
                             //DestinationClass上的自定义转换器
                             for (Class<? extends CustomConverter> converterClass : destinationConverter.value()) {
-                                CustomConverter converter = converterClass.newInstance();
+                                CustomConverter converter = sourceConverter.springIoc()?applicationContext.getBean(converterClass):converterClass.newInstance();
                                 converter.mappedIn(source, destination);
                             }
                         }
